@@ -1,35 +1,70 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { Component, ReactNode } from "react";
 import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+import Header from "./components/header/Header";
+import Loader from "./components/loader/Loader";
+import CardList from "./components/cardList/CardList";
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+import PokemonDTO from "./models/PokemonDTO";
+
+
+
+
+interface PokeAPIResponse {
+  count: number
+  next: string
+  previous: unknown
+  results: PokemonDTO[]
 }
 
-export default App
+const LS_KEY = 'my_key';
+export default class App extends Component {
+  state = {
+    isLoading: false,
+    data: []
+  }
+  async fetchData(query?: string) {
+    const search = query ? query.trim() : ''
+    try {
+      this.setState({ isLoading: true })
+      const response = await fetch(
+        `https://pokeapi.co/api/v2/pokemon?limit=20&offset=0`
+      )
+
+      if (response.ok) {
+        const data: PokeAPIResponse = await response.json()
+
+        // console.log(data.results);
+        this.setState({ data: data.results })
+      }
+
+    } catch {
+      this.setState({ data: [] })
+    } finally {
+      this.setState({ isLoading: false })
+
+    }
+  }
+
+
+
+  async componentDidMount(): Promise<void> {
+    await this.fetchData();
+  }
+  render(): ReactNode {
+    return (
+      <>
+        <Header />
+
+        <main className="content-wrapper">
+
+          {this.state.isLoading ? <Loader /> : <CardList data={this.state.data} />}
+          {/* {this.state.data} */}
+
+        </main>
+      </>
+    )
+  }
+}
+
+
