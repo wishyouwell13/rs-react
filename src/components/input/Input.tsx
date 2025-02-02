@@ -1,15 +1,18 @@
-import { Component, ReactNode } from 'react'
+import React, { Component, ReactNode } from 'react'
 import styles from './input.module.css'
 
-type Props = {
-    // callback: () => void
-    // text: string
+interface Props {
+    search: () => void
 }
 
 export default class Input extends Component<Props> {
     render(): ReactNode {
         return (
-            <input type="text" className={styles.input} />
+            <input
+                type="text"
+                className={styles.input}
+                onInput={(e: React.ChangeEvent<HTMLInputElement>) => this.props.search(e.target.value)}
+            />
         )
     }
 }

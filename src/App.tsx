@@ -17,25 +17,33 @@ interface PokeAPIResponse {
   results: PokemonDTO[]
 }
 
-const LS_KEY = 'my_key';
+
 export default class App extends Component {
   state = {
     isLoading: false,
     data: []
   }
   async fetchData(query?: string) {
-    const search = query ? query.trim() : ''
+    const searchQuery = query ? query.trim() : ''
+    console.log(searchQuery);
+
+
     try {
       this.setState({ isLoading: true })
+
       const response = await fetch(
-        `https://pokeapi.co/api/v2/pokemon?limit=20&offset=0`
+        `https://pokeapi.co/api/v2/pokemon${searchQuery ? '/' + searchQuery : ''}?limit=20&offset=0`
       )
 
       if (response.ok) {
         const data: PokeAPIResponse = await response.json()
 
-        // console.log(data.results);
-        this.setState({ data: data.results })
+        if (searchQuery) {
+          this.setState({ data: [data] })
+          localStorage['query'] = searchQuery;
+        } else {
+          this.setState({ data: data.results })
+        }
       }
 
     } catch {
@@ -46,21 +54,18 @@ export default class App extends Component {
     }
   }
 
-
-
   async componentDidMount(): Promise<void> {
+    console.log('mount');
+
     await this.fetchData();
   }
+
   render(): ReactNode {
     return (
       <>
-        <Header />
-
+        <Header onSearch={(query) => this.fetchData(query)} />
         <main className="content-wrapper">
-
           {this.state.isLoading ? <Loader /> : <CardList data={this.state.data} />}
-          {/* {this.state.data} */}
-
         </main>
       </>
     )
