@@ -25,7 +25,6 @@ export default class App extends Component {
   }
   async fetchData(query?: string) {
     const searchQuery = query ? query.trim() : ''
-    console.log(searchQuery);
 
 
     try {
@@ -40,7 +39,7 @@ export default class App extends Component {
 
         if (searchQuery) {
           this.setState({ data: [data] })
-          localStorage['query'] = searchQuery;
+
         } else {
           this.setState({ data: data.results })
         }
@@ -49,15 +48,17 @@ export default class App extends Component {
     } catch {
       this.setState({ data: [] })
     } finally {
+      localStorage['query'] = searchQuery;
+
+
       this.setState({ isLoading: false })
 
     }
   }
 
   async componentDidMount(): Promise<void> {
-    console.log('mount');
-
-    await this.fetchData();
+    const query = localStorage.getItem('query') || '';
+    await this.fetchData(query);
   }
 
   render(): ReactNode {
