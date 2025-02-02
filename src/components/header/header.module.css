@@ -1,0 +1,11 @@
+.header {
+    border-bottom: 1px solid #cecece;
+    padding: 25px 0px;
+    background-color: #f3f3f3;
+
+}
+
+.headerInner {
+    display: flex;
+    gap: 20px
+}
