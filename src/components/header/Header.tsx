@@ -23,7 +23,7 @@ export default class Header extends Component<Props, State> {
             <header className={styles.header}>
                 <div className='content-wrapper'>
                     <div className={styles.headerInner}>
-                        <Input search={(pokemon: string) => this.setState({ value: pokemon })} />
+                        <Input value={this.state.value} search={(pokemon: string) => this.setState({ value: pokemon })} />
                         <Button text={buttonName} handler={() => this.props.onSearch(this.state.value)}></Button>
                     </div>
                 </div>

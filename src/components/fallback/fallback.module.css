@@ -1,0 +1,11 @@
+.fallback {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    gap: 20px;
+}
+
+.text {
+    color: red;
+}

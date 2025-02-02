@@ -4,6 +4,7 @@ import './App.css'
 import Header from "./components/header/Header";
 import Loader from "./components/loader/Loader";
 import CardList from "./components/cardList/CardList";
+import Button from "./components/button/Button";
 
 import PokemonDTO from "./models/PokemonDTO";
 
@@ -21,7 +22,8 @@ interface PokeAPIResponse {
 export default class App extends Component {
   state = {
     isLoading: false,
-    data: []
+    data: [],
+    error: false,
   }
   async fetchData(query?: string) {
     const searchQuery = query ? query.trim() : ''
@@ -62,12 +64,29 @@ export default class App extends Component {
   }
 
   render(): ReactNode {
+    if (this.state.error) {
+
+      throw new Error('ERROR! ERROR! ERROR!')
+    }
     return (
       <>
         <Header onSearch={(query) => this.fetchData(query)} />
         <main className="content-wrapper">
           {this.state.isLoading ? <Loader /> : <CardList data={this.state.data} />}
         </main>
+        <button
+
+        >
+
+        </button>
+
+        <Button
+          handler={() => this.setState({ error: true })}
+          className="redButton"
+          text="ERROR"
+        >
+
+        </Button>
       </>
     )
   }

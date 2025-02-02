@@ -22,6 +22,10 @@ export default class CardList extends Component<CardListProps> {
                         ))}
                     </ul>
                 )}
+
+                {!this.props.data.length && (
+                    <h2>Wrong request! 404</h2>
+                )}
             </div>
         )
     }

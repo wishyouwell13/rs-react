@@ -3,7 +3,12 @@
   min-height: 100vh;
 }
 
-
+.redButton {
+  background-color: rgb(221, 71, 71) !important;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+}
 
 .logo {
   height: 6em;
