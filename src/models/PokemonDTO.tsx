@@ -1,5 +1,4 @@
 export default interface PokemonDTO {
-    name: string
-    url?: string
-
+  name: string;
+  url?: string;
 }
