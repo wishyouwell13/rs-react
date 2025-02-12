@@ -27,21 +27,29 @@ export default class App extends Component {
 
     try {
       this.setState({ isLoading: true });
+      const str = `https://pokeapi.co/api/v2/pokemon/${searchQuery}`;
+      console.log('query: ' + query);
+      console.log(str);
 
       const response = await fetch(
-        `https://pokeapi.co/api/v2/pokemon${searchQuery ? "/" + searchQuery : ""}?limit=20&offset=0`,
+        str
       );
 
-      if (response.ok) {
-        const data: PokeAPIResponse = await response.json();
+      console.log(response.ok);
+      if (!response.ok) {
+        throw new Error('Smth went wrong!')
 
-        if (searchQuery) {
-          this.setState({ data: [data] });
-        } else {
-          this.setState({ data: data.results });
-        }
       }
-    } catch {
+      const data: PokeAPIResponse = await response.json();
+
+      if (searchQuery) {
+        this.setState({ data: [data] });
+      } else {
+        this.setState({ data: data.results });
+      }
+    } catch (error) {
+      console.error('rreq ERRORR' + error);
+
       this.setState({ data: [] });
     } finally {
       localStorage["query"] = searchQuery;
@@ -62,7 +70,7 @@ export default class App extends Component {
     return (
       <>
         <ErrorBoundary>
-          <Header onSearch={(query) => this.fetchData(query)} />
+          <Header onSearch={async (query) => await this.fetchData(query)} />
           <main className="content-wrapper">
             {this.state.isLoading ? (
               <Loader />
