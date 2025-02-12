@@ -28,14 +28,11 @@ export default class App extends Component {
     try {
       this.setState({ isLoading: true });
       const str = `https://pokeapi.co/api/v2/pokemon/${searchQuery}`;
-      console.log('query: ' + query);
-      console.log(str);
 
       const response = await fetch(
         str
       );
 
-      console.log(response.ok);
       if (!response.ok) {
         throw new Error('Smth went wrong!')
 
@@ -48,8 +45,6 @@ export default class App extends Component {
         this.setState({ data: data.results });
       }
     } catch (error) {
-      console.error('rreq ERRORR' + error);
-
       this.setState({ data: [] });
     } finally {
       localStorage["query"] = searchQuery;

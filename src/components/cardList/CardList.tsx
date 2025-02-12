@@ -11,7 +11,7 @@ interface CardListProps {
 
 export default class CardList extends Component<CardListProps> {
   render(): ReactNode {
-    console.log(this.props.data.length)
+    console.log(this.props.data.length);
     return (
       <div>
         {!!this.props.data.length && (
