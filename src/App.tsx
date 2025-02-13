@@ -1,35 +1,86 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { Component, ReactNode } from "react";
+import "./App.css";
 
-function App() {
-  const [count, setCount] = useState(0)
+import Header from "./components/header/Header";
+import Loader from "./components/loader/Loader";
+import CardList from "./components/cardList/CardList";
+import Button from "./components/button/Button";
+import ErrorBoundary from "./components/error-boundary/ErrorBoundary";
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+import PokemonDTO from "./models/PokemonDTO";
+
+interface PokeAPIResponse {
+  count: number;
+  next: string;
+  previous: unknown;
+  results: PokemonDTO[];
 }
 
-export default App
+export default class App extends Component {
+  state = {
+    isLoading: false,
+    data: [],
+    error: false,
+  };
+  async fetchData(query?: string) {
+    const searchQuery = query ? query.trim() : "";
+
+    try {
+      this.setState({ isLoading: true });
+      const str = `https://pokeapi.co/api/v2/pokemon/${searchQuery}`;
+
+      const response = await fetch(
+        str
+      );
+
+      if (!response.ok) {
+        throw new Error('Smth went wrong!')
+
+      }
+      const data: PokeAPIResponse = await response.json();
+
+      if (searchQuery) {
+        this.setState({ data: [data] });
+      } else {
+        this.setState({ data: data.results });
+      }
+    } catch (error) {
+      this.setState({ data: [] });
+    } finally {
+      localStorage["query"] = searchQuery;
+
+      this.setState({ isLoading: false });
+    }
+  }
+
+  async componentDidMount(): Promise<void> {
+    const query = localStorage.getItem("query") || "";
+    await this.fetchData(query);
+  }
+
+  render(): ReactNode {
+    if (this.state.error) {
+      throw new Error("ERROR! ERROR! ERROR!");
+    }
+    return (
+      <>
+        <ErrorBoundary>
+          <Header onSearch={async (query) => await this.fetchData(query)} />
+          <main className="content-wrapper">
+            {this.state.isLoading ? (
+              <Loader />
+            ) : (
+              <CardList data={this.state.data} />
+            )}
+          </main>
+
+          <Button
+            handler={() => this.setState({ error: true })}
+            className="redButton"
+            text="ERROR"
+          ></Button>
+        </ErrorBoundary>
+      </>
+    );
+  }
+}
